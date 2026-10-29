@@ -1450,7 +1450,6 @@ async fn large_invalid_envelopes_obey_modes_and_strip_classifier_headers() {
     }
 }
 
-
 #[tokio::test]
 async fn invalid_utf8_in_ignored_json_rpc_params_obeys_policy() {
     let filter = make_reject_filter();

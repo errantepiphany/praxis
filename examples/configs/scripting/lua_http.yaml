@@ -1,0 +1,67 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 Praxis Contributors
+#
+# Lua scripting example for HTTP.
+#
+# Evaluates a Lua script and...
+#
+# ⚠️ EXPERIMENTAL: This example uses the `scripting` experimental feature.
+# Not recommended for production use. Build with --features scripting.
+#
+# Usage:
+#   cargo run -p praxis-proxy --features scripting -- -c examples/configs/scripting/lua_http.yaml
+#
+# Exercise:
+#   curl -i http://localhost:8080/
+
+listeners:
+  - name: default
+    address: "127.0.0.1:8080"
+    filter_chains:
+      - main
+
+filter_chains:
+  - name: main
+    filters:
+      - filter: lua_http
+        request_body_access: read_only
+        request_body_mode: stream_buffer
+        response_body_access: read_only
+        response_body_mode: stream_buffer
+        script: !lua |
+
+          local log = praxis.log.Log.new("example")
+          log:info("Lua HTTP example starting");
+
+          local filter = praxis.filter.http.HttpFilter.new()
+          local FilterAction = praxis.filter.FilterAction
+
+          ---@diagnostic disable-next-line: unused-local
+          filter.on_request = function(self, ctx)
+            local request = ctx:request()
+            local uri = request:uri()
+            log:info("on_request -> method: %s, uri[scheme: %s, authority: %s, path: %s, query: %s]",
+              request:method(),
+              uri:scheme(), uri:authority(), uri:path(), uri:query())
+            return FilterAction.continue()
+          end
+
+          praxis.filter.http.set(filter);
+
+      # - filter: static_response
+      #   status: 200
+      #   body: "OK"
+
+      - filter: router
+        routes:
+          - path_prefix: "/"
+            cluster: backend
+
+      - filter: load_balancer
+        clusters:
+          - name: backend
+            endpoints:
+              - "127.0.0.1:3000"
+
+insecure_options:
+  allow_private_endpoints: true # example proxies to local backends

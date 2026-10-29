@@ -576,6 +576,8 @@ fn register_http_builtins(filters: &mut HashMap<String, FilterRegistration>) {
     register_http_security(filters, "cors", CorsFilter::from_config);
     #[cfg(feature = "policy-engine")]
     register_http_policy(filters, "policy");
+    #[cfg(feature = "scripting")]
+    register_http(filters, "lua_http", crate::LuaHttpFilter::from_config);
     register_http_security(filters, "csrf", CsrfFilter::from_config);
     register_http_security(filters, "credential_injection", CredentialInjectionFilter::from_config);
     register_http(
@@ -684,6 +686,8 @@ fn register_tcp_builtins(filters: &mut HashMap<String, FilterRegistration>) {
         "tcp_load_balancer",
         crate::builtins::TcpLoadBalancerFilter::from_config,
     );
+    #[cfg(feature = "scripting")]
+    register_tcp(filters, "lua_tcp", crate::LuaTcpFilter::from_config);
 }
 
 /// Registers a single TCP filter factory with [`SecurityClass::Standard`].
@@ -767,6 +771,10 @@ mod tests {
         assert!(names.contains(&"headers"), "headers should be registered");
         assert!(names.contains(&"ip_acl"), "ip_acl should be registered");
         assert!(names.contains(&"load_balancer"), "load_balancer should be registered");
+        #[cfg(feature = "scripting")]
+        assert!(names.contains(&"lua_http"), "lua_http should be registered");
+        #[cfg(feature = "scripting")]
+        assert!(names.contains(&"lua_tcp"), "lua_tcp should be registered");
         assert!(names.contains(&"path_rewrite"), "path_rewrite should be registered");
         assert!(names.contains(&"rate_limit"), "rate_limit should be registered");
         assert!(names.contains(&"redirect"), "redirect should be registered");

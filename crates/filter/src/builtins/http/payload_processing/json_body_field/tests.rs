@@ -964,7 +964,6 @@ async fn promotes_even_when_target_header_already_in_extras() {
     );
 }
 
-
 /// Generate large scalar, object and array values ignored by the selector.
 fn large_ignored_values() -> [String; 3] {
     [

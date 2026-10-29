@@ -60,6 +60,7 @@ hyper-util = { version = "0.1.21", default-features = false }
 loom = "0.7.2"
 metrics = "0.24.6"
 metrics-exporter-prometheus = { version = "0.18.3", default-features = false }
+mlua = { version = "0.12.2", features = ["lua54", "macros", "send"] }
 nix = { version = "0.31.3", default-features = false, features = ["process", "resource", "signal", "user"] }
 notify = "8.2.0"
 object = { version = "0.40.0", default-features = false, features = ["read_core", "elf", "std"] }
