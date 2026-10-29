@@ -574,6 +574,8 @@ fn register_http_builtins(filters: &mut HashMap<String, FilterRegistration>) {
     register_http(filters, "circuit_breaker", CircuitBreakerFilter::from_config);
     register_http(filters, "compression", CompressionFilter::from_config);
     register_http_security(filters, "cors", CorsFilter::from_config);
+    #[cfg(feature = "lua-filter")]
+    register_http(filters, "lua", crate::LuaFilter::from_config);
     #[cfg(feature = "policy-engine")]
     register_http_policy(filters, "policy");
     register_http_security(filters, "csrf", CsrfFilter::from_config);
@@ -767,6 +769,8 @@ mod tests {
         assert!(names.contains(&"headers"), "headers should be registered");
         assert!(names.contains(&"ip_acl"), "ip_acl should be registered");
         assert!(names.contains(&"load_balancer"), "load_balancer should be registered");
+        #[cfg(feature = "lua-filter")]
+        assert!(names.contains(&"lua"), "lua should be registered");
         assert!(names.contains(&"path_rewrite"), "path_rewrite should be registered");
         assert!(names.contains(&"rate_limit"), "rate_limit should be registered");
         assert!(names.contains(&"redirect"), "redirect should be registered");

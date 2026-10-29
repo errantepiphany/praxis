@@ -1,0 +1,83 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 Praxis Contributors
+#
+# Lua Scripting
+#
+# Evaluates a Lua script. Scripts define `praxis.filter.on_request`
+# and `praxis.filter.on_response` functions; each receives a read-only
+# handle table describing the request or response.
+#
+# ⚠️ EXPERIMENTAL: This example uses the `lua-filter` experimental feature.
+# Not recommended for production use. Build with --features lua-filter.
+#
+# Usage:
+#   cargo run -p praxis-proxy --features lua-filter -- -c examples/configs/scripting/lua.yaml
+#
+# Exercise:
+#   curl -i http://localhost:8080/
+
+listeners:
+  - name: default
+    address: "127.0.0.1:8080"
+    filter_chains:
+      - main
+
+filter_chains:
+  - name: main
+    filters:
+      - filter: lua
+        script: |
+
+          function inspect(root, options)
+            return praxis.util:inspect(root, options)
+          end
+
+          function info(...)
+            praxis.log:info(...)
+          end
+
+          info("Lua example starting");
+
+          praxis.filter:on_request(function(request)
+            info("on_request -> method: %s, path: %s, query: %s, headers: %s",
+              request.method,
+              request.path,
+              request.query,
+              inspect(request.headers))
+          end)
+
+          praxis.filter:on_request_body(function(request)
+            info("on_request_body -> body: %s, end_of_stream: %s",
+              request.body,
+              request.end_of_stream)
+          end)
+
+          praxis.filter:on_response(function(response)
+            info("on_response -> status: %s, headers: %s",
+              response.status,
+              inspect(response.headers))
+          end)
+
+          praxis.filter:on_response_body(function(response)
+            info("on_response_body -> body: %s, end_of_stream: %s",
+              response.body,
+              response.end_of_stream)
+          end)
+
+      # - filter: static_response
+      #   status: 200
+      #   body: "OK"
+
+      - filter: router
+        routes:
+          - path_prefix: "/"
+            cluster: backend
+
+      - filter: load_balancer
+        clusters:
+          - name: backend
+            endpoints:
+              - "127.0.0.1:3000"
+
+insecure_options:
+  allow_private_endpoints: true # example proxies to local backends

@@ -114,6 +114,8 @@ pub use binding::ChainBindingHttpFactory;
 pub use body::{BodyAccess, BodyBuffer, BodyBufferOverflow, BodyCapabilities, BodyMode};
 #[cfg(feature = "basic-auth-filter")]
 pub use builtins::BasicAuthFilter;
+#[cfg(feature = "lua-filter")]
+pub use builtins::LuaFilter;
 pub use builtins::{
     CircuitBreakerFilter, ContainsValue, CredentialInjectionFilter, DisallowedOriginMode, EndpointReselector,
     EndpointSelectorFilter, GuardrailsAction, GuardrailsFilter, LoadBalancerFilter, PiiKind, RateLimitMode,

@@ -63,6 +63,7 @@ const GATED_FILTERS: &[(&str, bool)] = &[
     ("basic_auth", cfg!(feature = "basic-auth-filter")),
     ("cloud_events", cfg!(feature = "cloud-events-filter")),
     ("iterative_request_router", cfg!(feature = "iterative-request-router")),
+    ("lua", cfg!(feature = "lua-filter")),
     ("peer_identity_trust", cfg!(feature = "spiffe")),
     ("policy", cfg!(feature = "policy-engine")),
 ];
