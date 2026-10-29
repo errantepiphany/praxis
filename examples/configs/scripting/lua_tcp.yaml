@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 Praxis Contributors
+#
+# Lua scripting example for TCP.
+#
+# Evaluates a Lua script and...
+#
+# ⚠️ EXPERIMENTAL: This example uses the `scripting` experimental feature.
+# Not recommended for production use. Build with --features scripting.
+#
+# Usage:
+#   cargo run -p praxis-proxy --features scripting -- -c examples/configs/scripting/lua_tcp.yaml
+#
+# Exercise:
+#   nc localhost 5432   # observe connect/disconnect log lines
+
+listeners:
+  - name: default
+    address: "127.0.0.1:2323"
+    protocol: tcp
+    upstream: "127.0.0.1:12323"
+    filter_chains:
+      - main
+
+filter_chains:
+  - name: main
+    filters:
+      - filter: lua_tcp
+
+insecure_options:
+  allow_private_upstreams: true

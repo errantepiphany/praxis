@@ -68,6 +68,8 @@ mod pipeline;
 mod registration;
 mod registry;
 mod results;
+#[cfg(feature = "scripting")]
+mod scripting;
 pub mod sse;
 mod tcp_filter;
 mod trace_context;
@@ -181,6 +183,8 @@ pub use praxis_core::{
 pub use praxis_tls::TlsPeerIdentity;
 pub use registry::{FilterRegistry, SecurityClass};
 pub use results::{FilterResultSet, matches_filter_result};
+#[cfg(feature = "scripting")]
+pub use scripting::{LuaHttpFilter, LuaTcpFilter};
 pub use tcp_filter::{TcpFilter, TcpFilterContext, TcpLbSelection};
 pub use trace_context::TraceContext;
 
