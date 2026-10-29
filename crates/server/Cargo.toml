@@ -71,7 +71,7 @@ config-reload = ["dep:notify", "praxis-protocol/config-reload"]
 # only when `admin.address` or `admin.metrics_address` is set.
 # Disable for a build with no external observability/admin surface.
 admin-api = ["praxis-protocol/admin-api"]
-dev = ["basic-auth-filter"]
+dev = ["basic-auth-filter", "scripting"]
 basic-auth-filter = ["praxis-filter/basic-auth-filter", "experimental"]
 # The `jobs:` config section and its not-yet-read startup warning. Off by
 # default; experimental. The bounds land before the background job runtime
@@ -86,6 +86,8 @@ upstream-binding = ["praxis-filter/upstream-binding", "praxis-protocol/upstream-
 iterative-request-router = ["praxis-filter/iterative-request-router", "upstream-binding", "experimental"]
 # The `router` filter's JSON-alias body-routing groundwork. Off by default; experimental.
 router-json-aliases = ["praxis-filter/router-json-aliases", "experimental"]
+# Scripting filters. Off by default; experimental.
+scripting = ["praxis-filter/scripting", "experimental"]
 # Per-cluster slow start. Off by default; experimental. With the feature on,
 # weighted strategies apply the ramp. Hash strategies do not.
 slow-start = ["praxis-filter/slow-start", "experimental"]

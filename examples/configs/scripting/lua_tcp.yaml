@@ -1,0 +1,63 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 Praxis Contributors
+#
+# Lua scripting example for TCP.
+#
+# Runs an inline Lua TCP filter that logs each connection's remote/local
+# addresses, SNI, upstream, cluster and byte counters.
+#
+# ⚠️ EXPERIMENTAL: This example uses the `scripting` experimental feature.
+# Not recommended for production use. Build with --features scripting.
+#
+# Usage:
+#   cargo run -p praxis-proxy --features scripting -- -c examples/configs/scripting/lua_tcp.yaml
+#
+# Exercise:
+#   nc localhost 2323   # observe connect/disconnect log lines
+
+listeners:
+  - name: default
+    address: "127.0.0.1:2323"
+    protocol: tcp
+    upstream: "127.0.0.1:12323"
+    filter_chains:
+      - main
+
+filter_chains:
+  - name: main
+    filters:
+      - filter: lua_tcp
+        script: !lua |
+
+          local log = praxis.log.Log.new("lua_tcp example")
+          log:info("Lua TCP example starting")
+
+          local continue = praxis.filter.FilterAction.continue()
+
+          local filter = praxis.filter.tcp.get()
+
+          function filter:on_connect(ctx)
+            log:info(
+              "on_connect -> remote: %s, local: %s, sni: %s, upstream: %s, cluster: %s, connect_time: %s",
+              ctx:remote_addr(),
+              ctx:local_addr(),
+              tostring(ctx:sni()),
+              tostring(ctx:upstream_addr()),
+              tostring(ctx:cluster()),
+              ctx:connect_time()
+            )
+            return continue
+          end
+
+          function filter:on_disconnect(ctx)
+            log:info(
+              "on_disconnect -> remote: %s, bytes_in: %s, bytes_out: %s",
+              ctx:remote_addr(),
+              ctx:bytes_in(),
+              ctx:bytes_out()
+            )
+            return continue
+          end
+
+insecure_options:
+  allow_private_upstreams: true

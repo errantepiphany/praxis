@@ -1,0 +1,122 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 Praxis Contributors
+#
+# Lua scripting example for HTTP.
+#
+# Runs an inline Lua filter that declares body access and modes from Lua,
+# logs every request/response hook, and exposes the request, response and
+# filter-context handles.
+#
+# ⚠️ EXPERIMENTAL: This example uses the `scripting` experimental feature.
+# Not recommended for production use. Build with --features scripting.
+#
+# Usage:
+#   cargo run -p praxis-proxy --features scripting -- -c examples/configs/scripting/lua_http.yaml
+#
+# Exercise:
+#   curl -i http://localhost:8080/
+
+listeners:
+  - name: default
+    address: "127.0.0.1:8080"
+    filter_chains:
+      - main
+
+filter_chains:
+  - name: main
+    filters:
+      - filter: lua_http
+        script: !lua |
+
+          local log = praxis.log.Log.new("lua_http example")
+          log:info("Lua HTTP example starting")
+
+          local read_only = praxis.filter.http.BodyAccess.read_only()
+          local stream_buffer = praxis.filter.http.BodyMode.stream_buffer()
+          local continue = praxis.filter.FilterAction.continue()
+
+          local filter = praxis.filter.http.get()
+
+          function filter:request_body_access()
+            return read_only
+          end
+
+          function filter:request_body_mode()
+            return stream_buffer
+          end
+
+          function filter:on_request(ctx)
+            local request = ctx:request()
+            local uri = request:uri()
+            local headers = request:headers()
+            log:info(
+              "on_request -> method: %s, uri[scheme: %s, host: %s, port: %s, path: %s, query: %s, query values: %s], cluster: %s, client: %s, host header: %s",
+              request:method(),
+              uri:scheme(),
+              tostring(uri:host()),
+              tostring(uri:port()),
+              uri:path(),
+              uri:query(),
+              praxis.log.inspect(uri:query_values()),
+              tostring(ctx:cluster()),
+              tostring(ctx:client_addr() and ctx:client_addr():address()),
+              tostring(headers:get("host"))
+            )
+            return continue
+          end
+
+          function filter:on_request_body(ctx, body, end_of_stream)
+            log:info(
+              "on_request_body -> end_of_stream: %s, body length: %s, buffered length: %s, request bytes: %s",
+              end_of_stream,
+              body:len(),
+              ctx:buffered_request_body():len(),
+              ctx:request_body_bytes()
+            )
+            return continue
+          end
+
+          function filter:response_body_access()
+            return read_only
+          end
+
+          function filter:response_body_mode()
+            return stream_buffer
+          end
+
+          function filter:on_response(ctx)
+            -- print(praxis.util.inspect(ctx))
+            local response = ctx:response()
+            log:info(
+              "on_response -> status: %s, response header status: %s, response bytes: %s",
+              response and response:status() or nil,
+              ctx:response() and ctx:response():status() or nil,
+              ctx:response_body_bytes()
+            )
+            return continue
+          end
+
+          function filter:on_response_body(ctx, body, end_of_stream)
+            log:info(
+              "on_response_body -> end_of_stream: %s, body length: %s, response bytes: %s",
+              end_of_stream,
+              body:len(),
+              ctx:response_body_bytes()
+            )
+            -- if end_of_stream then print(body:data()) end
+            return continue
+          end
+
+      - filter: router
+        routes:
+          - path_prefix: "/"
+            cluster: backend
+
+      - filter: load_balancer
+        clusters:
+          - name: backend
+            endpoints:
+              - "127.0.0.1:3000"
+
+insecure_options:
+  allow_private_endpoints: true

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
+  "diagnostics": {
+    "globals": [
+      "praxis"
+    ]
+  },
+  "runtime": {
+    "version": "Lua 5.5"
+  },
+  "workspace": {
+    "library": [
+      "./crates/filter/src/scripting/lua/lib"
+    ],
+    "checkThirdParty": false
+  }
+}

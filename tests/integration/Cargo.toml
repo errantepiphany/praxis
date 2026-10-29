@@ -51,6 +51,7 @@ iterative-request-router = ["praxis/iterative-request-router"]
 # Off by default; runs the cluster-staged callout tests against a proxy built
 # with the chain-binding extension API.
 chain-binding = ["praxis/chain-binding", "praxis-filter/chain-binding"]
+scripting = ["praxis-filter/scripting"]
 slow-start = ["praxis/slow-start"]
 bound-upstream-request-body = ["praxis/bound-upstream-request-body"]
 # Off by default; runs the SPIFFE mTLS e2e tests against a proxy built with it.
