@@ -151,6 +151,12 @@ See [Quickstart](../docs/quickstart.md#quick-test-servers) for full options.
 | [upstream-tls.yaml](configs/protocols/upstream-tls.yaml) | Plain HTTP on the listener; TLS to the upstream |
 | [websocket.yaml](configs/protocols/websocket.yaml) | HTTP listener that transparently proxies WebSocket upgrade requests |
 
+### Scripting
+
+| File | Description |
+| ------ | ------------- |
+| [lua.yaml](configs/scripting/lua.yaml) | Evaluates a Lua script |
+
 ### Security
 
 | File | Description |

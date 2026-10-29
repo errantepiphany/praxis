@@ -12,6 +12,8 @@ pub use http::BasicAuthFilter;
 pub use http::CloudEventsFilter;
 #[cfg(feature = "iterative-request-router")]
 pub use http::IterativeRequestRouterFilter;
+#[cfg(feature = "lua-filter")]
+pub use http::LuaFilter;
 #[cfg(feature = "spiffe")]
 pub use http::PeerIdentityTrustFilter;
 pub use http::{

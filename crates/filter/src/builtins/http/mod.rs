@@ -6,6 +6,7 @@
 pub(crate) mod compile_user_regex;
 mod observability;
 pub mod payload_processing;
+mod scripting;
 mod security;
 mod traffic_management;
 mod transformation;
@@ -21,6 +22,8 @@ pub use payload_processing::{
     CompressionFilter, GrpcWebFilter, JsonBodyFieldFilter, JsonBodyFilter, JsonBodyOps, JsonRpcFilter,
     encode_trailer_frame,
 };
+#[cfg(feature = "lua-filter")]
+pub use scripting::LuaFilter;
 #[cfg(feature = "basic-auth-filter")]
 pub use security::BasicAuthFilter;
 #[cfg(feature = "spiffe")]

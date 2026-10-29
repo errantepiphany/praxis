@@ -108,6 +108,7 @@ mod ring_hash;
 mod round_robin;
 mod route_on_promoted_header;
 mod route_templates;
+mod scripting_examples;
 mod security_examples;
 mod selected_upstream_conditions;
 mod session_affinity;

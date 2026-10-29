@@ -24,6 +24,12 @@ Built-in filters organized by protocol and category.
 | [`json_body_field`](http/payload_processing/json_body_field.md) | - | Extracts top-level fields from a JSON request body and promotes their values to request headers using [`StreamBuffer`] mode. |
 | [`json_rpc`](http/payload_processing/json_rpc.md) | - | Extracts JSON-RPC 2.0 envelope metadata from request bodies and promotes method, id, and kind to request headers and filter results for routing. |
 
+## HTTP / Scripting
+
+| Filter | Feature | Description |
+|--------|---------|-------------|
+| [`lua`](http/scripting/lua.md) | `lua-filter` | HTTP Lua filter. |
+
 ## HTTP / Security
 
 | Filter | Feature | Description |

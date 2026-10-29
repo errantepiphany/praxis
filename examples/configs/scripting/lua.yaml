@@ -1,0 +1,37 @@
+# Lua Scripting
+#
+# Evaluates a Lua script. Scripts define global `praxis_on_request`
+# and `praxis_on_response` functions; each receives a read-only
+# handle table describing the request or response.
+#
+# ⚠️ EXPERIMENTAL: This example uses the `lua-filter` experimental feature.
+# Not recommended for production use. Build with --features lua-filter.
+#
+# Usage:
+#   cargo run -p praxis-proxy --features lua-filter -- -c examples/configs/scripting/lua.yaml
+#
+# Exercise:
+#   curl -i http://localhost:8080/
+
+listeners:
+  - name: default
+    address: "127.0.0.1:8080"
+    filter_chains:
+      - main
+
+filter_chains:
+  - name: main
+    filters:
+      - filter: lua
+        script: |
+          -- Called on the request path.
+          function praxis_on_request(request_handle)
+            print(string.format("--> praxis_on_request(method[%s], path:[%s], query:[%s])", request_handle.method, request_handle.path, request_handle.query));
+          end
+          -- Called on the response path.
+          function praxis_on_response(response_handle)
+            print(string.format("--> praxis_on_response(status:[%s])", response_handle.status));
+          end
+      - filter: static_response
+        status: 200
+        body: "OK"

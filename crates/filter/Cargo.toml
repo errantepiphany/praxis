@@ -23,6 +23,10 @@ basic-auth-filter = [
     "dep:openssl",
     "dep:subtle",
 ]
+lua-filter = [
+    "dep:mlua",
+]
+
 otel = [
     "dep:opentelemetry",
     "dep:tracing-opentelemetry",
@@ -91,6 +95,7 @@ parking_lot = { workspace = true }
 dashmap = { workspace = true }
 http = { workspace = true }
 metrics = { workspace = true }
+mlua = { workspace = true, optional = true }
 opentelemetry = { workspace = true, optional = true }
 percent-encoding = { workspace = true }
 # The workspace entry carries no defaults: the filter engine dials through the
